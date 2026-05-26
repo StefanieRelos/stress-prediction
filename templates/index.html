@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Stress Level Prediction</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f4f6fb;
+      --surface: #ffffff;
+      --surface2: #f0f4ff;
+      --border: #dde3f0;
+      --accent: #3b6ff0;
+      --accent2: #7c3aed;
+      --low: #059669;
+      --low-bg: #ecfdf5;
+      --low-border: #a7f3d0;
+      --medium: #d97706;
+      --medium-bg: #fffbeb;
+      --medium-border: #fde68a;
+      --high: #dc2626;
+      --high-bg: #fff5f5;
+      --high-border: #fecaca;
+      --text: #1e293b;
+      --text2: #475569;
+      --muted: #94a3b8;
+      --shadow: 0 4px 24px rgba(59,111,240,0.08);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Nunito', sans-serif;
+      min-height: 100vh;
+      padding: 40px 20px 60px;
+      background-image:
+        radial-gradient(ellipse at 10% 10%, rgba(59,111,240,0.06) 0%, transparent 55%),
+        radial-gradient(ellipse at 90% 90%, rgba(124,58,237,0.05) 0%, transparent 55%);
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 36px;
+      animation: fadeDown 0.6s ease both;
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(59,111,240,0.1);
+      border: 1px solid rgba(59,111,240,0.25);
+      color: var(--accent);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 999px;
+      margin-bottom: 14px;
+    }
+    header h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.7rem, 4.5vw, 2.6rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, #1e293b 0%, #3b6ff0 60%, #7c3aed 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+    header p {
+      color: var(--text2);
+      font-size: 0.95rem;
+      max-width: 460px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* ── FORM CARD ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px;
+      width: 100%;
+      max-width: 660px;
+      margin: 0 auto 24px;
+      box-shadow: var(--shadow);
+      animation: fadeUp 0.6s ease 0.1s both;
+    }
+
+    .section-label {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .field { display: flex; flex-direction: column; gap: 5px; }
+
+    label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text2);
+    }
+    input, select {
+      background: var(--surface2);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.95rem;
+      padding: 10px 13px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+      width: 100%;
+    }
+    input:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(59,111,240,0.12);
+      background: #fff;
+    }
+
+    .divider { height: 1px; background: var(--border); margin: 22px 0; }
+
+    button[type="submit"] {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+      margin-top: 10px;
+      box-shadow: 0 4px 18px rgba(59,111,240,0.3);
+    }
+    button[type="submit"]:hover { opacity: 0.9; transform: translateY(-2px); }
+    button[type="submit"]:active { transform: translateY(0); }
+
+    /* ── RESULT WRAPPER ── */
+    .result-wrapper {
+      width: 100%;
+      max-width: 660px;
+      margin: 0 auto;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    /* ── STRESS RESULT CARD (separate) ── */
+    .stress-result-card {
+      border-radius: 20px;
+      padding: 36px 28px;
+      text-align: center;
+      border: 2px solid;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+    }
+    .stress-result-card.High   { background: var(--high-bg);   border-color: var(--high-border); }
+    .stress-result-card.Low    { background: var(--low-bg);    border-color: var(--low-border); }
+    .stress-result-card.Medium { background: var(--medium-bg); border-color: var(--medium-border); }
+
+    .stress-emoji { font-size: 3.5rem; margin-bottom: 10px; }
+    .stress-tag {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .stress-level-text {
+      font-family: 'Syne', sans-serif;
+      font-size: 3rem;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+    .High   .stress-level-text { color: var(--high); }
+    .Low    .stress-level-text { color: var(--low); }
+    .Medium .stress-level-text { color: var(--medium); }
+
+    .confidence-pill {
+      display: inline-block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 5px 16px;
+      border-radius: 999px;
+      background: rgba(0,0,0,0.06);
+      color: var(--text2);
+    }
+
+    /* ── RESULT SUB CARDS ── */
+    .result-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 22px 24px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow);
+    }
+    .result-card h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Summary Grid */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    .summary-item {
+      background: var(--surface2);
+      border-radius: 10px;
+      padding: 12px;
+      text-align: center;
+    }
+    .summary-item .s-label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+    }
+    .summary-item .s-value {
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    /* Reasons */
+    .reason-item {
+      display: flex;
+      gap: 10px;
+      padding: 11px 14px;
+      background: #fff8f8;
+      border-left: 3px solid var(--high);
+      border-radius: 0 8px 8px 0;
+      font-size: 0.88rem;
+      line-height: 1.6;
+      color: var(--text2);
+      margin-bottom: 8px;
+    }
+
+    /* Recommendations */
+    .rec-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .rec-list li {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      font-size: 0.88rem;
+      line-height: 1.6;
+      color: var(--text2);
+      padding: 10px 14px;
+      background: var(--surface2);
+      border-radius: 10px;
+    }
+    .rec-list li .icon { font-size: 1.1rem; flex-shrink: 0; }
+
+    /* Food Grid */
+    .food-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .food-item {
+      background: var(--surface2);
+      border-radius: 12px;
+      padding: 14px 12px;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+    .food-item .food-emoji { font-size: 1.8rem; margin-bottom: 6px; }
+    .food-item .food-name {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+    .food-item .food-desc {
+      font-size: 0.73rem;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .error-box {
+      background: #fff5f5;
+      border: 1px solid #fecaca;
+      border-radius: 12px;
+      padding: 16px;
+      color: var(--high);
+      font-size: 0.88rem;
+      margin-top: 20px;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 36px;
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 520px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .card { padding: 22px 16px; }
+      .summary-grid { grid-template-columns: repeat(2, 1fr); }
+      .food-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="badge">Machine Learning · BSIT-301</div>
+  <h1>Student Stress Level<br/>Prediction System</h1>
+  <p>Fill in your daily habits and academic details to get your personalized stress level prediction.</p>
+</header>
+
+<!-- FORM CARD -->
+<div class="card">
+  <form method="POST" action="/predict">
+
+    <p class="section-label">👤 Personal Information</p>
+    <div class="grid-2">
+      <div class="field">
+        <label for="age">Age</label>
+        <input type="number" id="age" name="age" min="10" max="30" placeholder="e.g. 19" required/>
+      </div>
+      <div class="field">
+        <label for="gender">Gender</label>
+        <select id="gender" name="gender" required>
+          <option value="" disabled selected>Select gender</option>
+          <option value="Female">Female</option>
+          <option value="Male">Male</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <p class="section-label">😴 Daily Habits</p>
+    <div class="grid-2">
+      <div class="field">
+        <label for="sleep_hours">Sleep Hours / day</label>
+        <input type="number" id="sleep_hours" name="sleep_hours" step="0.5" min="0" max="24" placeholder="e.g. 6" required/>
+      </div>
+      <div class="field">
+        <label for="screen_time">Screen Time Hours / day</label>
+        <input type="number" id="screen_time" name="screen_time" step="0.5" min="0" max="24" placeholder="e.g. 4" required/>
+      </div>
+      <div class="field">
+        <label for="study_hours">Study Hours / day</label>
+        <input type="number" id="study_hours" name="study_hours" step="0.5" min="0" max="24" placeholder="e.g. 3" required/>
+      </div>
+      <div class="field">
+        <label for="caffeine_intake">Caffeine Intake (cups/day)</label>
+        <input type="number" id="caffeine_intake" name="caffeine_intake" step="1" min="0" max="20" placeholder="e.g. 2" required/>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <p class="section-label">🎓 Academic & Lifestyle</p>
+    <div class="grid-2">
+      <div class="field">
+        <label for="physical_activity">Physical Activity Level</label>
+        <select id="physical_activity" name="physical_activity" required>
+          <option value="" disabled selected>Select level</option>
+          <option value="Low">Low</option>
+          <option value="Medium">Medium</option>
+          <option value="High">High</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="academic_pressure">Academic Pressure Level</label>
+        <select id="academic_pressure" name="academic_pressure" required>
+          <option value="" disabled selected>Select level</option>
+          <option value="Low">Low</option>
+          <option value="Medium">Medium</option>
+          <option value="High">High</option>
+        </select>
+      </div>
+    </div>
+
+    <button type="submit">🔍 Predict My Stress Level</button>
+  </form>
+
+  {% if error %}
+  <div class="error-box">⚠️ Error: {{ error }}</div>
+  {% endif %}
+</div>
+
+<!-- RESULTS (separate cards outside the form card) -->
+{% if submitted %}
+{% set emoji_map = {"High": "😰", "Low": "😊", "Medium": "😐"} %}
+<div class="result-wrapper">
+
+  <!-- CARD 1: STRESS RESULT -->
+  <div class="stress-result-card {{ prediction }}">
+    <div class="stress-emoji">{{ emoji_map[prediction] }}</div>
+    <div class="stress-tag">Predicted Stress Level</div>
+    <div class="stress-level-text">{{ prediction }} Stress</div>
+    <div class="confidence-pill">Model Confidence: {{ confidence }}%</div>
+  </div>
+
+  <!-- CARD 2: INPUT SUMMARY -->
+  <div class="result-card">
+    <h3>📋 Your Input Summary</h3>
+    <div class="summary-grid">
+      <div class="summary-item">
+        <div class="s-label">Age</div>
+        <div class="s-value">{{ form_data.age | int }}</div>
+      </div>
+      <div class="summary-item">
+        <div class="s-label">Gender</div>
+        <div class="s-value">{{ form_data.gender }}</div>
+      </div>
+      <div class="summary-item">
+        <div class="s-label">Sleep</div>
+        <div class="s-value">{{ form_data.sleep_hours }}h</div>
+      </div>
+      <div class="summary-item">
+        <div class="s-label">Screen Time</div>
+        <div class="s-value">{{ form_data.screen_time }}h</div>
+      </div>
+      <div class="summary-item">
+        <div class="s-label">Study Hrs</div>
+        <div class="s-value">{{ form_data.study_hours }}h</div>
+      </div>
+      <div class="summary-item">
+        <div class="s-label">Caffeine</div>
+        <div class="s-value">{{ form_data.caffeine_intake | int }} cups</div>
+      </div>
+      <div class="summary-item">
+        <div class="s-label">Activity</div>
+        <div class="s-value">{{ form_data.physical_activity }}</div>
+      </div>
+      <div class="summary-item">
+        <div class="s-label">Pressure</div>
+        <div class="s-value">{{ form_data.academic_pressure }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD 3: WHY THIS RESULT -->
+  <div class="result-card">
+    <h3>🔍 Why is your stress {{ prediction }}?</h3>
+    {% for reason in reasons %}
+    <div class="reason-item">
+      <span>⚠️</span>
+      <span>{{ reason | safe }}</span>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- CARD 4: RECOMMENDATIONS -->
+  <div class="result-card">
+    <h3>💡 What You Should Do</h3>
+    {% if prediction == "High" %}
+    <ul class="rec-list">
+      <li><span class="icon">😴</span><span><strong>Sleep 7–9 hours</strong> — Set a fixed bedtime. Avoid using your phone 30 mins before sleeping to improve sleep quality.</span></li>
+      <li><span class="icon">📵</span><span><strong>Reduce screen time</strong> — Limit to 3–4 hours/day. Use the 20-20-20 rule: every 20 mins, look 20 feet away for 20 seconds.</span></li>
+      <li><span class="icon">🏃</span><span><strong>Exercise daily</strong> — Even a 20-minute walk releases endorphins that combat stress hormones like cortisol.</span></li>
+      <li><span class="icon">📚</span><span><strong>Use the Pomodoro technique</strong> — Study 25 mins, break 5 mins. Avoid cramming more than 6 hours/day.</span></li>
+      <li><span class="icon">🧘</span><span><strong>Practice deep breathing</strong> — Try 4-7-8 breathing: inhale 4s, hold 7s, exhale 8s. Do this 3x when overwhelmed.</span></li>
+      <li><span class="icon">🗣️</span><span><strong>Talk to someone</strong> — Share your stress with a trusted friend, family, or school counselor. You don't have to handle it alone.</span></li>
+    </ul>
+    {% elif prediction == "Medium" %}
+    <ul class="rec-list">
+      <li><span class="icon">⏰</span><span><strong>Improve time management</strong> — Create a daily schedule and prioritize tasks. Avoid last-minute cramming.</span></li>
+      <li><span class="icon">😴</span><span><strong>Aim for 7 hours of sleep</strong> — Consistent sleep greatly reduces moderate stress levels over time.</span></li>
+      <li><span class="icon">☕</span><span><strong>Reduce caffeine</strong> — Limit to 1–2 cups per day and avoid caffeine after 3PM to protect your sleep.</span></li>
+      <li><span class="icon">🏊</span><span><strong>Add light exercise</strong> — 3x a week of 30-minute physical activity (jogging, yoga) significantly reduces stress.</span></li>
+      <li><span class="icon">📴</span><span><strong>Take digital breaks</strong> — Designate 1–2 hours daily as screen-free time, especially before bed.</span></li>
+    </ul>
+    {% else %}
+    <ul class="rec-list">
+      <li><span class="icon">✅</span><span><strong>Keep your routine</strong> — Your current habits are working well. Maintain your sleep schedule and study balance.</span></li>
+      <li><span class="icon">🌱</span><span><strong>Stay consistent</strong> — Continue your physical activity and limit caffeine to sustain your low stress levels.</span></li>
+      <li><span class="icon">📖</span><span><strong>Share your habits</strong> — Consider sharing your healthy routines with classmates who may be struggling.</span></li>
+      <li><span class="icon">🎯</span><span><strong>Set new goals</strong> — Since you're managing stress well, this is a great time to take on new academic challenges.</span></li>
+    </ul>
+    {% endif %}
+  </div>
+
+  <!-- CARD 5: FOOD SUGGESTIONS -->
+  <div class="result-card">
+    <h3>🍽️ Recommended Foods for Your Stress Level</h3>
+    {% if prediction == "High" %}
+    <div class="food-grid">
+      <div class="food-item"><div class="food-emoji">🍫</div><div class="food-name">Dark Chocolate</div><div class="food-desc">Reduces cortisol and boosts serotonin</div></div>
+      <div class="food-item"><div class="food-emoji">🫐</div><div class="food-name">Blueberries</div><div class="food-desc">Antioxidants that fight stress damage</div></div>
+      <div class="food-item"><div class="food-emoji">🥑</div><div class="food-name">Avocado</div><div class="food-desc">B vitamins that support brain health</div></div>
+      <div class="food-item"><div class="food-emoji">🐟</div><div class="food-name">Salmon / Tuna</div><div class="food-desc">Omega-3 reduces anxiety and stress</div></div>
+      <div class="food-item"><div class="food-emoji">🍵</div><div class="food-name">Green Tea</div><div class="food-desc">L-theanine promotes calm and focus</div></div>
+      <div class="food-item"><div class="food-emoji">🥜</div><div class="food-name">Almonds</div><div class="food-desc">Magnesium helps regulate stress hormones</div></div>
+    </div>
+    {% elif prediction == "Medium" %}
+    <div class="food-grid">
+      <div class="food-item"><div class="food-emoji">🍌</div><div class="food-name">Banana</div><div class="food-desc">Natural sugars + B6 that boost mood</div></div>
+      <div class="food-item"><div class="food-emoji">🥦</div><div class="food-name">Broccoli</div><div class="food-desc">Vitamin C reduces stress hormones</div></div>
+      <div class="food-item"><div class="food-emoji">🥚</div><div class="food-name">Eggs</div><div class="food-desc">Choline supports brain and mood</div></div>
+      <div class="food-item"><div class="food-emoji">🍊</div><div class="food-name">Oranges</div><div class="food-desc">Vitamin C lowers cortisol spikes</div></div>
+      <div class="food-item"><div class="food-emoji">🌾</div><div class="food-name">Oatmeal</div><div class="food-desc">Stabilizes blood sugar and mood</div></div>
+      <div class="food-item"><div class="food-emoji">🧀</div><div class="food-name">Yogurt</div><div class="food-desc">Probiotics linked to reduced anxiety</div></div>
+    </div>
+    {% else %}
+    <div class="food-grid">
+      <div class="food-item"><div class="food-emoji">🥗</div><div class="food-name">Leafy Greens</div><div class="food-desc">Folate supports dopamine production</div></div>
+      <div class="food-item"><div class="food-emoji">🍇</div><div class="food-name">Grapes</div><div class="food-desc">Antioxidants that maintain health</div></div>
+      <div class="food-item"><div class="food-emoji">💧</div><div class="food-name">Water</div><div class="food-desc">Hydration prevents fatigue and stress</div></div>
+      <div class="food-item"><div class="food-emoji">🍓</div><div class="food-name">Strawberries</div><div class="food-desc">Vitamin C supports immune function</div></div>
+      <div class="food-item"><div class="food-emoji">🌰</div><div class="food-name">Walnuts</div><div class="food-desc">Omega-3s keep brain sharp and calm</div></div>
+      <div class="food-item"><div class="food-emoji">🍚</div><div class="food-name">Brown Rice</div><div class="food-desc">Sustained energy without sugar crashes</div></div>
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endif %}
+
+<footer>
+  Stefanie S. Relos &nbsp;·&nbsp; BSIT-301 &nbsp;·&nbsp; Student Stress Level Prediction System
+</footer>
+
+</body>
+</html>
