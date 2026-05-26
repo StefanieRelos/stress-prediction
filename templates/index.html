@@ -4,6 +4,12 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Student Stress Level Prediction</title>
+  <link rel="manifest" href="/static/manifest.json"/>
+  <meta name="theme-color" content="#3b6ff0"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+  <meta name="apple-mobile-web-app-title" content="Stress App"/>
+  <link rel="apple-touch-icon" href="/static/icon-192.png"/>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -555,5 +561,10 @@
   Stefanie S. Relos &nbsp;·&nbsp; BSIT-301 &nbsp;·&nbsp; Student Stress Level Prediction System
 </footer>
 
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/static/sw.js").then(() => console.log("SW registered"));
+}
+</script>
 </body>
 </html>
