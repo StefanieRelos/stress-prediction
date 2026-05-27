@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}{{ action }} Journal Entry{% endblock %}
+
+{% block nav %}
+<div class="top-nav">
+  <div class="nav-left">
+    <a href="{{ url_for('journal') }}" class="back-btn">←</a>
+    <span class="nav-title">{{ action }} Journal Entry</span>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="content animate">
+  <div class="card">
+    <form method="POST" id="journal-form">
+
+      <div class="form-group">
+        <label class="form-label">Title</label>
+        <input type="text" name="title" class="form-input"
+               placeholder="e.g. Stressful exam week"
+               value="{{ journal.title if journal else '' }}" required/>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">How are you feeling? (Mood)</label>
+        <select name="mood" class="form-input">
+          {% set moods = ['Happy 😊', 'Okay 😐', 'Stressed 😰', 'Anxious 😟', 'Tired 😴', 'Motivated 💪', 'Sad 😢'] %}
+          {% for m in moods %}
+            <option value="{{ m }}" {% if journal and journal.mood == m %}selected{% endif %}>{{ m }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Journal Entry</label>
+        <textarea name="content" class="form-input" rows="6"
+                  placeholder="Write about your day, your stress, how you feel...">{{ journal.content if journal else '' }}</textarea>
+      </div>
+
+      <br/>
+    </form>
+  </div>
+</div>
+
+<div class="sticky-btn-wrapper" style="padding-bottom:70px;">
+  <button type="submit" form="journal-form" class="btn btn-primary btn-full">
+    {% if action == 'Edit' %}✅ Save Changes{% else %}✅ Save Entry{% endif %}
+  </button>
+</div>
+{% endblock %}

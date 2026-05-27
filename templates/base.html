@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>{% block title %}Stress App{% endblock %}</title>
+  <link rel="manifest" href="/static/manifest.json"/>
+  <meta name="theme-color" content="#f4f6fb"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-title" content="Stress App"/>
+  <link rel="apple-touch-icon" href="/static/icon-192.png"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f4f6fb; --surface: #fff; --surface2: #f0f4ff;
+      --border: #dde3f0; --accent: #3b6ff0; --accent2: #7c3aed;
+      --low: #059669; --low-bg: #ecfdf5; --low-border: #a7f3d0;
+      --medium: #d97706; --medium-bg: #fffbeb; --medium-border: #fde68a;
+      --high: #dc2626; --high-bg: #fff5f5; --high-border: #fecaca;
+      --text: #1e293b; --text2: #475569; --muted: #94a3b8;
+      --shadow: 0 2px 16px rgba(59,111,240,0.07);
+    }
+    html { -webkit-text-size-adjust: 100%; }
+    body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-serif; min-height: 100vh; min-height: 100dvh; padding-bottom: 80px; }
+
+    /* NAV */
+    .top-nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(244,246,251,0.93);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 11px 16px;
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    }
+    .nav-left { display: flex; align-items: center; gap: 10px; }
+    .back-btn {
+      width: 34px; height: 34px; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      text-decoration: none; color: var(--text2); font-size: 0.95rem;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .nav-title { font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 700; color: var(--text); }
+    .nav-user { font-size: 0.75rem; color: var(--muted); font-weight: 600; }
+
+    /* BOTTOM NAV */
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(255,255,255,0.96);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border);
+      display: flex; justify-content: space-around; align-items: center;
+      padding: 8px 0 12px;
+    }
+    .nav-item {
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+      text-decoration: none; color: var(--muted);
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.04em;
+      padding: 4px 16px; border-radius: 10px;
+      transition: color 0.15s; -webkit-tap-highlight-color: transparent;
+    }
+    .nav-item .nav-icon { font-size: 1.3rem; }
+    .nav-item.active { color: var(--accent); }
+
+    /* CONTENT */
+    .content { padding: 16px; max-width: 600px; margin: 0 auto; }
+
+    /* CARDS */
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 18px; margin-bottom: 14px; box-shadow: var(--shadow); }
+    .card-title { font-family: 'Syne', sans-serif; font-size: 0.88rem; font-weight: 700; color: var(--text); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+
+    /* FLASH MESSAGES */
+    .flash { padding: 11px 14px; border-radius: 10px; font-size: 0.85rem; font-weight: 600; margin-bottom: 14px; }
+    .flash.success { background: var(--low-bg); color: var(--low); border: 1px solid var(--low-border); }
+    .flash.error   { background: var(--high-bg); color: var(--high); border: 1px solid var(--high-border); }
+
+    /* FORMS */
+    .form-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
+    .form-label { font-size: 0.78rem; font-weight: 600; color: var(--text2); }
+    .form-input {
+      background: var(--surface2); border: 1.5px solid var(--border); border-radius: 10px;
+      color: var(--text); font-family: 'Nunito', sans-serif; font-size: 1rem;
+      padding: 11px 12px; outline: none; width: 100%; -webkit-appearance: none;
+      transition: border-color 0.2s;
+    }
+    .form-input:focus { border-color: var(--accent); background: #fff; }
+    textarea.form-input { resize: vertical; min-height: 100px; }
+
+    /* BUTTONS */
+    .btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 13px 20px; border-radius: 12px; font-family: 'Syne', sans-serif;
+      font-size: 0.95rem; font-weight: 700; cursor: pointer; border: none;
+      text-decoration: none; transition: transform 0.15s, opacity 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; box-shadow: 0 4px 14px rgba(59,111,240,0.3); }
+    .btn-danger  { background: var(--high-bg); color: var(--high); border: 1px solid var(--high-border); }
+    .btn-ghost   { background: var(--surface2); color: var(--text2); border: 1px solid var(--border); }
+    .btn-full    { width: 100%; }
+    .btn-sm      { padding: 7px 14px; font-size: 0.78rem; border-radius: 8px; }
+
+    /* STICKY BOTTOM BTN */
+    .sticky-btn-wrapper {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      padding: 10px 16px 14px;
+      background: rgba(244,246,251,0.95);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border); z-index: 99;
+    }
+
+    /* GRID */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    /* STRESS BADGE */
+    .stress-badge { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 0.72rem; font-weight: 700; }
+    .stress-badge.High   { background: var(--high-bg);   color: var(--high);   border: 1px solid var(--high-border); }
+    .stress-badge.Low    { background: var(--low-bg);    color: var(--low);    border: 1px solid var(--low-border); }
+    .stress-badge.Medium { background: var(--medium-bg); color: var(--medium); border: 1px solid var(--medium-border); }
+
+    /* SECTION LABEL */
+    .section-label { font-family: 'Syne', sans-serif; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+
+    /* EMPTY STATE */
+    .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); }
+    .empty-state .empty-icon { font-size: 2.5rem; margin-bottom: 10px; }
+    .empty-state p { font-size: 0.88rem; }
+
+    /* MOOD BADGE */
+    .mood-badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 0.7rem; font-weight: 700; background: var(--surface2); color: var(--text2); border: 1px solid var(--border); }
+
+    select.form-input {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2394a3b8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px;
+    }
+
+    @keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+    .animate { animation: fadeUp 0.4s ease both; }
+  </style>
+  {% block extra_style %}{% endblock %}
+</head>
+<body>
+  {% block nav %}{% endblock %}
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="content" style="padding-bottom:0;">
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  {% block content %}{% endblock %}
+
+  {% block bottom_nav %}
+  {% if current_user.is_authenticated %}
+  <nav class="bottom-nav">
+    <a href="{{ url_for('dashboard') }}" class="nav-item {% if request.endpoint == 'dashboard' %}active{% endif %}">
+      <span class="nav-icon">🏠</span>Home
+    </a>
+    <a href="{{ url_for('form') }}" class="nav-item {% if request.endpoint in ['form','predict','results'] %}active{% endif %}">
+      <span class="nav-icon">📊</span>Predict
+    </a>
+    <a href="{{ url_for('history') }}" class="nav-item {% if request.endpoint == 'history' %}active{% endif %}">
+      <span class="nav-icon">📋</span>History
+    </a>
+    <a href="{{ url_for('journal') }}" class="nav-item {% if request.endpoint in ['journal','add_journal','edit_journal'] %}active{% endif %}">
+      <span class="nav-icon">📝</span>Journal
+    </a>
+    <a href="{{ url_for('logout') }}" class="nav-item">
+      <span class="nav-icon">🚪</span>Logout
+    </a>
+  </nav>
+  {% endif %}
+  {% endblock %}
+
+  <!-- INSTALL BANNER -->
+  <div id="install-banner" style="display:none; position:fixed; bottom:60px; left:0; right:0; z-index:200; margin:0 12px; background:#fff; border:1px solid var(--border); border-radius:16px; padding:12px 16px; box-shadow:0 8px 32px rgba(59,111,240,0.15); align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <img src="/static/icon-192.png" width="40" height="40" style="border-radius:10px; flex-shrink:0;"/>
+      <div>
+        <div style="font-family:Syne,sans-serif; font-weight:700; font-size:0.85rem; color:var(--text);">Stress Prediction App</div>
+        <div style="font-size:0.72rem; color:var(--muted);">Install on your device</div>
+      </div>
+    </div>
+    <div style="display:flex; gap:8px;">
+      <button onclick="dismissInstall()" style="padding:7px 12px; border-radius:8px; border:1px solid var(--border); background:var(--surface2); color:var(--muted); font-size:0.78rem; font-weight:600; cursor:pointer;">Not now</button>
+      <button onclick="installApp()" style="padding:7px 16px; border-radius:8px; border:none; background:linear-gradient(135deg,#3b6ff0,#7c3aed); color:#fff; font-family:Syne,sans-serif; font-size:0.78rem; font-weight:700; cursor:pointer;">📲 Install</button>
+    </div>
+  </div>
+
+  <script>
+    if ("serviceWorker" in navigator) navigator.serviceWorker.register("/static/sw.js");
+
+    // PWA Install
+    let deferredPrompt;
+    const banner = document.getElementById("install-banner");
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      banner.style.display = "flex";
+    });
+    function installApp() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(() => {
+          banner.style.display = "none";
+          deferredPrompt = null;
+        });
+      }
+    }
+    function dismissInstall() { banner.style.display = "none"; }
+    window.addEventListener("appinstalled", () => banner.style.display = "none");
+  </script>
+  {% block extra_script %}{% endblock %}
+</body>
+</html>

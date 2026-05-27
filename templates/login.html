@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Login — Stress App{% endblock %}
+
+{% block extra_style %}
+<style>
+  body { background: linear-gradient(160deg, #0f1c3f 0%, #1a2d6b 55%, #2d1b69 100%); min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px 20px 40px; }
+  .auth-container { width: 100%; max-width: 400px; animation: fadeUp 0.5s ease both; }
+  .auth-logo { text-align: center; margin-bottom: 28px; }
+  .auth-logo .logo-circle { width: 70px; height: 70px; background: linear-gradient(135deg,#3b6ff0,#7c3aed); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin: 0 auto 12px; box-shadow: 0 12px 32px rgba(59,111,240,0.4); }
+  .auth-logo h1 { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; color: #fff; }
+  .auth-logo p { font-size: 0.8rem; color: rgba(255,255,255,0.45); margin-top: 4px; }
+  .auth-card { background: #fff; border-radius: 20px; padding: 28px 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+  .auth-card h2 { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; color: #1e293b; margin-bottom: 20px; }
+  .auth-footer { text-align: center; margin-top: 16px; font-size: 0.82rem; color: rgba(255,255,255,0.45); }
+  .auth-footer a { color: #60a5fa; font-weight: 700; text-decoration: none; }
+</style>
+{% endblock %}
+
+{% block bottom_nav %}{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+  <div class="auth-logo">
+    <div class="logo-circle">📊</div>
+    <h1>Stress Prediction App</h1>
+    <p>BSIT-301 · Stefanie S. Relos</p>
+  </div>
+
+  <div class="auth-card">
+    <h2>Welcome back 👋</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="flash {{ category }}" style="margin-bottom:14px;">{{ message }}</div>
+      {% endfor %}
+    {% endwith %}
+
+    <form method="POST" action="/login">
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" name="email" class="form-input" placeholder="you@email.com" required/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" name="password" class="form-input" placeholder="••••••" required/>
+      </div>
+      <button type="submit" class="btn btn-primary btn-full" style="margin-top:4px;">Login →</button>
+    </form>
+  </div>
+
+  <p class="auth-footer">No account yet? <a href="/register">Register here</a></p>
+</div>
+{% endblock %}

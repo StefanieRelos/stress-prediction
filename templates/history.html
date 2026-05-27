@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Prediction History{% endblock %}
+
+{% block nav %}
+<div class="top-nav">
+  <div class="nav-left">
+    <a href="{{ url_for('dashboard') }}" class="back-btn">←</a>
+    <span class="nav-title">Prediction History</span>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="content animate">
+  {% if predictions %}
+    {% for p in predictions %}
+    <div class="card">
+      <div style="display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:12px;">
+        <div>
+          <span class="stress-badge {{ p.stress_level }}">{{ p.stress_level }} Stress</span>
+          <div style="font-size:0.72rem; color:var(--muted); margin-top:4px;">{{ p.created_at.strftime('%B %d, %Y · %I:%M %p') }}</div>
+        </div>
+        <div style="font-family:'Syne',sans-serif; font-size:1rem; font-weight:800; color:var(--accent);">{{ p.confidence }}%</div>
+      </div>
+
+      <!-- Summary Grid -->
+      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-bottom:12px;">
+        <div style="background:var(--surface2); border-radius:8px; padding:8px; text-align:center;">
+          <div style="font-size:0.6rem; color:var(--muted); font-weight:700; text-transform:uppercase; margin-bottom:2px;">Sleep</div>
+          <div style="font-family:'Syne',sans-serif; font-size:0.85rem; font-weight:700;">{{ p.sleep_hours }}h</div>
+        </div>
+        <div style="background:var(--surface2); border-radius:8px; padding:8px; text-align:center;">
+          <div style="font-size:0.6rem; color:var(--muted); font-weight:700; text-transform:uppercase; margin-bottom:2px;">Screen</div>
+          <div style="font-family:'Syne',sans-serif; font-size:0.85rem; font-weight:700;">{{ p.screen_time }}h</div>
+        </div>
+        <div style="background:var(--surface2); border-radius:8px; padding:8px; text-align:center;">
+          <div style="font-size:0.6rem; color:var(--muted); font-weight:700; text-transform:uppercase; margin-bottom:2px;">Study</div>
+          <div style="font-family:'Syne',sans-serif; font-size:0.85rem; font-weight:700;">{{ p.study_hours }}h</div>
+        </div>
+        <div style="background:var(--surface2); border-radius:8px; padding:8px; text-align:center;">
+          <div style="font-size:0.6rem; color:var(--muted); font-weight:700; text-transform:uppercase; margin-bottom:2px;">Pressure</div>
+          <div style="font-family:'Syne',sans-serif; font-size:0.85rem; font-weight:700;">{{ p.academic_pressure }}</div>
+        </div>
+      </div>
+
+      <!-- Delete -->
+      <form method="POST" action="{{ url_for('delete_prediction', pred_id=p.id) }}"
+            onsubmit="return confirm('Delete this prediction?')">
+        <button type="submit" class="btn btn-danger btn-sm">🗑 Delete</button>
+      </form>
+    </div>
+    {% endfor %}
+  {% else %}
+    <div class="empty-state" style="margin-top:60px;">
+      <div class="empty-icon">📊</div>
+      <p style="margin-bottom:16px;">No predictions yet.</p>
+      <a href="{{ url_for('form') }}" class="btn btn-primary">Check Stress Level</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
