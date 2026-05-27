@@ -236,36 +236,54 @@
 
     <a href="/login" class="cta-btn">Get Started →</a>
     <p class="cta-note">Free · No account needed · Less than 1 minute</p>
+
+    <!-- INSTALL CARD — always visible on splash -->
+    <div id="install-card" style="width:100%; margin-top:20px; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.12); border-radius:16px; padding:14px 16px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <img src="/static/icon-192.png" width="40" height="40" style="border-radius:10px; flex-shrink:0;"/>
+        <div>
+          <div style="font-family:Syne,sans-serif; font-weight:700; font-size:0.85rem; color:#fff;">Stress Prediction App</div>
+          <div style="font-size:0.72rem; color:rgba(255,255,255,0.45);">Add to your home screen</div>
+        </div>
+      </div>
+      <button id="install-btn" onclick="installApp()" style="padding:9px 18px; border-radius:10px; border:none; background:linear-gradient(135deg,#3b6ff0,#7c3aed); color:#fff; font-family:Syne,sans-serif; font-size:0.82rem; font-weight:700; cursor:pointer; white-space:nowrap;">📲 Install App</button>
+    </div>
+
   </div>
 
   <div class="splash-footer">Stefanie S. Relos · BSIT-301 · Student Stress Level Prediction System</div>
 
-  <div id="install-banner">
-    <div class="install-info">
-      <img src="/static/icon-192.png" alt="App Icon"/>
-      <div>
-        <div class="install-text-title">Stress Prediction App</div>
-        <div class="install-text-sub">Install on your device</div>
-      </div>
-    </div>
-    <div class="install-actions">
-      <button class="btn-dismiss" onclick="dismissInstall()">Not now</button>
-      <button class="btn-install" onclick="installApp()">📲 Install</button>
-    </div>
-  </div>
-
   <script>
     if ("serviceWorker" in navigator) navigator.serviceWorker.register("/static/sw.js");
+
     let deferredPrompt;
-    const banner = document.getElementById("install-banner");
+    const installBtn = document.getElementById("install-btn");
+    const installCard = document.getElementById("install-card");
+
+    // Hide card by default, show only when installable
+    installCard.style.display = "none";
+
     window.addEventListener("beforeinstallprompt", (e) => {
-      e.preventDefault(); deferredPrompt = e; banner.classList.add("show");
+      e.preventDefault();
+      deferredPrompt = e;
+      installCard.style.display = "flex";
     });
+
     function installApp() {
-      if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt.userChoice.then(() => { banner.classList.remove("show"); deferredPrompt = null; }); }
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((result) => {
+          if (result.outcome === "accepted") {
+            installCard.style.display = "none";
+          }
+          deferredPrompt = null;
+        });
+      }
     }
-    function dismissInstall() { banner.classList.remove("show"); }
-    window.addEventListener("appinstalled", () => banner.classList.remove("show"));
+
+    window.addEventListener("appinstalled", () => {
+      installCard.style.display = "none";
+    });
   </script>
 </body>
 </html>
