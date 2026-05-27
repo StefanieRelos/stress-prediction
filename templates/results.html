@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Your Stress Results</title>
+  <title>Your Results — Student Stress App</title>
   <link rel="manifest" href="/static/manifest.json"/>
-  <meta name="theme-color" content="#3b6ff0"/>
+  <meta name="theme-color" content="#f4f6fb"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <link rel="apple-touch-icon" href="/static/icon-192.png"/>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
       --bg: #f4f6fb;
-      --surface: #ffffff;
+      --surface: #fff;
       --surface2: #f0f4ff;
       --border: #dde3f0;
       --accent: #3b6ff0;
@@ -22,164 +22,169 @@
       --medium: #d97706; --medium-bg: #fffbeb; --medium-border: #fde68a;
       --high: #dc2626; --high-bg: #fff5f5; --high-border: #fecaca;
       --text: #1e293b; --text2: #475569; --muted: #94a3b8;
-      --shadow: 0 4px 24px rgba(59,111,240,0.08);
+      --shadow: 0 2px 16px rgba(59,111,240,0.07);
     }
+
+    html { -webkit-text-size-adjust: 100%; }
+
     body {
       background: var(--bg);
       color: var(--text);
       font-family: 'Nunito', sans-serif;
       min-height: 100vh;
-      padding: 24px 20px 80px;
-      background-image:
-        radial-gradient(ellipse at 10% 10%, rgba(59,111,240,0.06) 0%, transparent 55%),
-        radial-gradient(ellipse at 90% 90%, rgba(124,58,237,0.05) 0%, transparent 55%);
+      min-height: 100dvh;
+      padding-bottom: 100px;
     }
 
+    /* Sticky Nav */
     .top-nav {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      max-width: 660px;
-      margin: 0 auto 28px;
-      animation: fadeDown 0.5s ease both;
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(244,246,251,0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 16px;
+      display: flex; align-items: center; gap: 12px;
     }
     .back-btn {
-      width: 38px; height: 38px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      text-decoration: none;
-      color: var(--text2);
-      font-size: 1rem;
-      box-shadow: var(--shadow);
-      transition: transform 0.15s;
+      width: 36px; height: 36px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; display: flex; align-items: center; justify-content: center;
+      text-decoration: none; color: var(--text2); font-size: 1rem; flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
     }
-    .back-btn:hover { transform: translateX(-2px); }
     .nav-title { font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--text); }
 
     /* Progress */
-    .progress-bar { max-width: 660px; margin: 0 auto 24px; animation: fadeUp 0.5s ease 0.1s both; }
-    .progress-label { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--muted); font-weight: 600; margin-bottom: 6px; }
-    .progress-track { height: 6px; background: var(--border); border-radius: 999px; overflow: hidden; }
+    .progress-section { padding: 16px 16px 0; }
+    .progress-label { display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--muted); font-weight: 600; margin-bottom: 6px; }
+    .progress-track { height: 5px; background: var(--border); border-radius: 999px; overflow: hidden; }
     .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 999px; width: 100%; }
 
-    .result-wrapper { width: 100%; max-width: 660px; margin: 0 auto; }
+    .content { padding: 16px; }
 
     /* Stress Banner */
     .stress-banner {
       border-radius: 20px;
-      padding: 36px 28px;
+      padding: 24px 16px;
       text-align: center;
       border: 2px solid;
-      margin-bottom: 20px;
-      box-shadow: var(--shadow);
-      animation: popIn 0.6s cubic-bezier(0.175,0.885,0.32,1.275) 0.2s both;
+      margin-bottom: 14px;
+      animation: popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275) both;
+      overflow: hidden;
     }
     .stress-banner.High   { background: var(--high-bg);   border-color: var(--high-border); }
     .stress-banner.Low    { background: var(--low-bg);    border-color: var(--low-border); }
     .stress-banner.Medium { background: var(--medium-bg); border-color: var(--medium-border); }
 
-    .stress-emoji { font-size: 3.5rem; margin-bottom: 10px; }
-    .stress-tag { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
-    .stress-level-text { font-family: 'Syne', sans-serif; font-size: 3rem; font-weight: 800; line-height: 1; margin-bottom: 12px; }
+    .stress-emoji { font-size: 3rem; margin-bottom: 8px; }
+    .stress-tag { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+    .stress-level-text { font-family: 'Syne', sans-serif; font-size: clamp(1.6rem, 8vw, 2.2rem); font-weight: 800; line-height: 1.1; margin-bottom: 10px; word-break: break-word; }
     .High   .stress-level-text { color: var(--high); }
     .Low    .stress-level-text { color: var(--low); }
     .Medium .stress-level-text { color: var(--medium); }
-    .confidence-pill { display: inline-block; font-size: 0.82rem; font-weight: 600; padding: 5px 16px; border-radius: 999px; background: rgba(0,0,0,0.06); color: var(--text2); }
+    .confidence-pill { display: inline-block; font-size: 0.78rem; font-weight: 600; padding: 4px 14px; border-radius: 999px; background: rgba(0,0,0,0.06); color: var(--text2); }
 
     /* Cards */
     .result-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 16px;
-      padding: 22px 24px;
-      margin-bottom: 16px;
+      padding: 18px;
+      margin-bottom: 14px;
       box-shadow: var(--shadow);
-      animation: fadeUp 0.5s ease both;
     }
-    .result-card:nth-child(2) { animation-delay: 0.25s; }
-    .result-card:nth-child(3) { animation-delay: 0.35s; }
-    .result-card:nth-child(4) { animation-delay: 0.45s; }
-    .result-card:nth-child(5) { animation-delay: 0.55s; }
-
-    .result-card h3 { font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 700; color: var(--text); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+    .card-title { font-family: 'Syne', sans-serif; font-size: 0.85rem; font-weight: 700; color: var(--text); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
 
     /* Summary Grid */
-    .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-    .summary-item { background: var(--surface2); border-radius: 10px; padding: 12px; text-align: center; }
-    .s-label { font-size: 0.68rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
-    .s-value { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; color: var(--text); }
+    .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .summary-item { background: var(--surface2); border-radius: 10px; padding: 10px 8px; text-align: center; }
+    .s-label { font-size: 0.6rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 3px; }
+    .s-value { font-family: 'Syne', sans-serif; font-size: 0.88rem; font-weight: 700; color: var(--text); }
 
     /* Reasons */
-    .reason-item { display: flex; gap: 10px; padding: 11px 14px; background: #fff8f8; border-left: 3px solid var(--high); border-radius: 0 8px 8px 0; font-size: 0.88rem; line-height: 1.6; color: var(--text2); margin-bottom: 8px; }
+    .reason-item {
+      display: flex; gap: 8px;
+      padding: 10px 12px;
+      background: #fff8f8;
+      border-left: 3px solid var(--high);
+      border-radius: 0 8px 8px 0;
+      font-size: 0.85rem; line-height: 1.5; color: var(--text2);
+      margin-bottom: 8px;
+    }
 
-    /* Recommendations */
+    /* Recs */
     .rec-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
-    .rec-list li { display: flex; gap: 10px; align-items: flex-start; font-size: 0.88rem; line-height: 1.6; color: var(--text2); padding: 10px 14px; background: var(--surface2); border-radius: 10px; }
-    .rec-list li .icon { font-size: 1.1rem; flex-shrink: 0; }
+    .rec-list li {
+      display: flex; gap: 10px; align-items: flex-start;
+      font-size: 0.85rem; line-height: 1.55; color: var(--text2);
+      padding: 10px 12px; background: var(--surface2); border-radius: 10px;
+    }
+    .rec-list li .icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
 
     /* Food Grid */
-    .food-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-    .food-item { background: var(--surface2); border-radius: 12px; padding: 14px 12px; text-align: center; border: 1px solid var(--border); }
-    .food-emoji { font-size: 1.8rem; margin-bottom: 6px; }
-    .food-name { font-size: 0.82rem; font-weight: 700; color: var(--text); margin-bottom: 3px; }
-    .food-desc { font-size: 0.73rem; color: var(--muted); line-height: 1.4; }
+    .food-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .food-item { background: var(--surface2); border-radius: 12px; padding: 12px 8px; text-align: center; border: 1px solid var(--border); }
+    .food-emoji { font-size: 1.6rem; margin-bottom: 5px; }
+    .food-name { font-size: 0.75rem; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+    .food-desc { font-size: 0.68rem; color: var(--muted); line-height: 1.3; }
 
-    /* Retry Button */
-    .retry-btn {
-      display: block;
-      width: 100%;
-      max-width: 660px;
-      margin: 0 auto 16px;
-      padding: 14px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      border: none;
-      border-radius: 12px;
-      color: #fff;
-      font-family: 'Syne', sans-serif;
-      font-size: 1rem;
-      font-weight: 700;
-      text-decoration: none;
-      text-align: center;
-      cursor: pointer;
-      box-shadow: 0 4px 18px rgba(59,111,240,0.3);
-      transition: opacity 0.2s, transform 0.15s;
-      animation: fadeUp 0.5s ease 0.6s both;
+    /* Bottom Retry */
+    .retry-wrapper {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      padding: 12px 16px;
+      background: rgba(244,246,251,0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border);
+      z-index: 100;
     }
-    .retry-btn:hover { opacity: 0.9; transform: translateY(-2px); }
+    .retry-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; padding: 15px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border: none; border-radius: 14px; color: #fff;
+      font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700;
+      text-decoration: none; cursor: pointer;
+      box-shadow: 0 4px 16px rgba(59,111,240,0.3);
+      -webkit-tap-highlight-color: transparent;
+      transition: transform 0.15s;
+    }
+    .retry-btn:active { transform: scale(0.98); }
 
-    footer { text-align: center; margin-top: 20px; color: var(--muted); font-size: 0.78rem; animation: fadeUp 0.5s ease 0.7s both; }
+    @media (min-width: 540px) {
+      .content { max-width: 600px; margin: 0 auto; }
+      .retry-wrapper { max-width: 600px; left: 50%; transform: translateX(-50%); }
+      .summary-grid { grid-template-columns: repeat(4, 1fr); }
+    }
 
-    @keyframes fadeDown { from { opacity:0; transform:translateY(-16px); } to { opacity:1; transform:translateY(0); } }
-    @keyframes fadeUp   { from { opacity:0; transform:translateY(18px);  } to { opacity:1; transform:translateY(0); } }
-    @keyframes popIn    { from { opacity:0; transform:scale(0.92); }       to { opacity:1; transform:scale(1); } }
-
-    @media (max-width: 520px) {
+    @media (max-width: 360px) {
       .summary-grid { grid-template-columns: repeat(2, 1fr); }
       .food-grid { grid-template-columns: repeat(2, 1fr); }
     }
+
+    @keyframes popIn  { from { opacity:0; transform:scale(0.93); } to { opacity:1; transform:scale(1); } }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
   </style>
 </head>
 <body>
 
-  <!-- Top Nav -->
   <div class="top-nav">
     <a href="/predict" class="back-btn">←</a>
     <span class="nav-title">Your Results</span>
   </div>
 
-  <!-- Progress -->
-  <div class="progress-bar">
+  <div class="progress-section">
     <div class="progress-label">
-      <span>Step 2 of 2 — Your Results</span>
-      <span>100%</span>
+      <span>Step 2 of 2 — Results</span>
+      <span>100% ✅</span>
     </div>
     <div class="progress-track"><div class="progress-fill"></div></div>
   </div>
 
   {% set emoji_map = {"High": "😰", "Low": "😊", "Medium": "😐"} %}
-  <div class="result-wrapper">
+
+  <div class="content">
 
     <!-- STRESS BANNER -->
     <div class="stress-banner {{ prediction }}">
@@ -191,14 +196,14 @@
 
     <!-- INPUT SUMMARY -->
     <div class="result-card">
-      <h3>📋 Your Input Summary</h3>
+      <div class="card-title">📋 Your Input Summary</div>
       <div class="summary-grid">
         <div class="summary-item"><div class="s-label">Age</div><div class="s-value">{{ form_data.age | int }}</div></div>
         <div class="summary-item"><div class="s-label">Gender</div><div class="s-value">{{ form_data.gender }}</div></div>
         <div class="summary-item"><div class="s-label">Sleep</div><div class="s-value">{{ form_data.sleep_hours }}h</div></div>
-        <div class="summary-item"><div class="s-label">Screen Time</div><div class="s-value">{{ form_data.screen_time }}h</div></div>
-        <div class="summary-item"><div class="s-label">Study Hrs</div><div class="s-value">{{ form_data.study_hours }}h</div></div>
-        <div class="summary-item"><div class="s-label">Caffeine</div><div class="s-value">{{ form_data.caffeine_intake | int }} cups</div></div>
+        <div class="summary-item"><div class="s-label">Screen</div><div class="s-value">{{ form_data.screen_time }}h</div></div>
+        <div class="summary-item"><div class="s-label">Study</div><div class="s-value">{{ form_data.study_hours }}h</div></div>
+        <div class="summary-item"><div class="s-label">Caffeine</div><div class="s-value">{{ form_data.caffeine_intake | int }}c</div></div>
         <div class="summary-item"><div class="s-label">Activity</div><div class="s-value">{{ form_data.physical_activity }}</div></div>
         <div class="summary-item"><div class="s-label">Pressure</div><div class="s-value">{{ form_data.academic_pressure }}</div></div>
       </div>
@@ -206,7 +211,7 @@
 
     <!-- WHY THIS RESULT -->
     <div class="result-card">
-      <h3>🔍 Why is your stress {{ prediction }}?</h3>
+      <div class="card-title">🔍 Why {{ prediction }} Stress?</div>
       {% for reason in reasons %}
       <div class="reason-item"><span>⚠️</span><span>{{ reason | safe }}</span></div>
       {% endfor %}
@@ -214,80 +219,77 @@
 
     <!-- RECOMMENDATIONS -->
     <div class="result-card">
-      <h3>💡 What You Should Do</h3>
+      <div class="card-title">💡 What You Should Do</div>
       {% if prediction == "High" %}
       <ul class="rec-list">
-        <li><span class="icon">😴</span><span><strong>Sleep 7–9 hours</strong> — Set a fixed bedtime and avoid your phone 30 mins before sleeping.</span></li>
-        <li><span class="icon">📵</span><span><strong>Reduce screen time</strong> — Limit to 3–4 hrs/day. Use the 20-20-20 rule every 20 minutes.</span></li>
-        <li><span class="icon">🏃</span><span><strong>Exercise daily</strong> — Even a 20-minute walk releases endorphins that fight cortisol.</span></li>
-        <li><span class="icon">📚</span><span><strong>Pomodoro technique</strong> — Study 25 mins, break 5 mins. Avoid cramming over 6 hours/day.</span></li>
-        <li><span class="icon">🧘</span><span><strong>Deep breathing</strong> — Try 4-7-8 breathing: inhale 4s, hold 7s, exhale 8s. Repeat 3x.</span></li>
-        <li><span class="icon">🗣️</span><span><strong>Talk to someone</strong> — Share with a trusted friend, family, or school counselor.</span></li>
+        <li><span class="icon">😴</span><span><strong>Sleep 7–9 hours</strong> — Set a fixed bedtime. Avoid phone 30 mins before sleeping.</span></li>
+        <li><span class="icon">📵</span><span><strong>Reduce screen time</strong> — Limit to 3–4 hrs/day. Use the 20-20-20 rule.</span></li>
+        <li><span class="icon">🏃</span><span><strong>Exercise daily</strong> — Even 20 mins of walking releases endorphins.</span></li>
+        <li><span class="icon">📚</span><span><strong>Pomodoro technique</strong> — Study 25 mins, break 5 mins. Avoid cramming.</span></li>
+        <li><span class="icon">🧘</span><span><strong>Deep breathing</strong> — Inhale 4s, hold 7s, exhale 8s. Repeat 3x.</span></li>
+        <li><span class="icon">🗣️</span><span><strong>Talk to someone</strong> — Share with a friend, family, or school counselor.</span></li>
       </ul>
       {% elif prediction == "Medium" %}
       <ul class="rec-list">
-        <li><span class="icon">⏰</span><span><strong>Improve time management</strong> — Create a daily schedule and prioritize tasks.</span></li>
-        <li><span class="icon">😴</span><span><strong>Aim for 7 hours of sleep</strong> — Consistent sleep reduces moderate stress over time.</span></li>
-        <li><span class="icon">☕</span><span><strong>Reduce caffeine</strong> — Max 1–2 cups/day. Avoid caffeine after 3PM.</span></li>
-        <li><span class="icon">🏊</span><span><strong>Light exercise 3x/week</strong> — 30 minutes of jogging, yoga, or swimming helps.</span></li>
-        <li><span class="icon">📴</span><span><strong>Digital breaks</strong> — 1–2 hours screen-free daily, especially before bed.</span></li>
+        <li><span class="icon">⏰</span><span><strong>Manage your time</strong> — Create a daily schedule and stick to it.</span></li>
+        <li><span class="icon">😴</span><span><strong>Aim for 7 hours sleep</strong> — Consistent sleep reduces moderate stress.</span></li>
+        <li><span class="icon">☕</span><span><strong>Reduce caffeine</strong> — Max 1–2 cups/day. None after 3PM.</span></li>
+        <li><span class="icon">🏊</span><span><strong>Light exercise 3x/week</strong> — 30 mins of jogging or yoga helps a lot.</span></li>
+        <li><span class="icon">📴</span><span><strong>Digital breaks</strong> — 1–2 hrs screen-free daily, especially before bed.</span></li>
       </ul>
       {% else %}
       <ul class="rec-list">
-        <li><span class="icon">✅</span><span><strong>Keep your routine</strong> — Your habits are working well. Maintain your sleep and study balance.</span></li>
-        <li><span class="icon">🌱</span><span><strong>Stay consistent</strong> — Continue your physical activity and healthy diet.</span></li>
-        <li><span class="icon">📖</span><span><strong>Share your habits</strong> — Help classmates who may be struggling with stress.</span></li>
-        <li><span class="icon">🎯</span><span><strong>Set new goals</strong> — Great time to take on new academic or personal challenges.</span></li>
+        <li><span class="icon">✅</span><span><strong>Keep your routine</strong> — Your habits are great! Maintain your balance.</span></li>
+        <li><span class="icon">🌱</span><span><strong>Stay consistent</strong> — Keep up your physical activity and healthy diet.</span></li>
+        <li><span class="icon">📖</span><span><strong>Help others</strong> — Share your healthy habits with stressed classmates.</span></li>
+        <li><span class="icon">🎯</span><span><strong>Set new goals</strong> — Great time to take on new challenges!</span></li>
       </ul>
       {% endif %}
     </div>
 
     <!-- FOOD SUGGESTIONS -->
     <div class="result-card">
-      <h3>🍽️ Recommended Foods</h3>
+      <div class="card-title">🍽️ Recommended Foods</div>
       {% if prediction == "High" %}
       <div class="food-grid">
-        <div class="food-item"><div class="food-emoji">🍫</div><div class="food-name">Dark Chocolate</div><div class="food-desc">Reduces cortisol, boosts serotonin</div></div>
-        <div class="food-item"><div class="food-emoji">🫐</div><div class="food-name">Blueberries</div><div class="food-desc">Antioxidants fight stress damage</div></div>
-        <div class="food-item"><div class="food-emoji">🥑</div><div class="food-name">Avocado</div><div class="food-desc">B vitamins support brain health</div></div>
-        <div class="food-item"><div class="food-emoji">🐟</div><div class="food-name">Salmon / Tuna</div><div class="food-desc">Omega-3 reduces anxiety</div></div>
-        <div class="food-item"><div class="food-emoji">🍵</div><div class="food-name">Green Tea</div><div class="food-desc">L-theanine promotes calm focus</div></div>
-        <div class="food-item"><div class="food-emoji">🥜</div><div class="food-name">Almonds</div><div class="food-desc">Magnesium regulates stress hormones</div></div>
+        <div class="food-item"><div class="food-emoji">🍫</div><div class="food-name">Dark Chocolate</div><div class="food-desc">Reduces cortisol</div></div>
+        <div class="food-item"><div class="food-emoji">🫐</div><div class="food-name">Blueberries</div><div class="food-desc">Fights stress damage</div></div>
+        <div class="food-item"><div class="food-emoji">🥑</div><div class="food-name">Avocado</div><div class="food-desc">Supports brain health</div></div>
+        <div class="food-item"><div class="food-emoji">🐟</div><div class="food-name">Salmon</div><div class="food-desc">Omega-3 reduces anxiety</div></div>
+        <div class="food-item"><div class="food-emoji">🍵</div><div class="food-name">Green Tea</div><div class="food-desc">Promotes calm focus</div></div>
+        <div class="food-item"><div class="food-emoji">🥜</div><div class="food-name">Almonds</div><div class="food-desc">Regulates stress hormones</div></div>
       </div>
       {% elif prediction == "Medium" %}
       <div class="food-grid">
-        <div class="food-item"><div class="food-emoji">🍌</div><div class="food-name">Banana</div><div class="food-desc">B6 boosts mood naturally</div></div>
-        <div class="food-item"><div class="food-emoji">🥦</div><div class="food-name">Broccoli</div><div class="food-desc">Vitamin C reduces stress hormones</div></div>
-        <div class="food-item"><div class="food-emoji">🥚</div><div class="food-name">Eggs</div><div class="food-desc">Choline supports brain and mood</div></div>
-        <div class="food-item"><div class="food-emoji">🍊</div><div class="food-name">Oranges</div><div class="food-desc">Vitamin C lowers cortisol spikes</div></div>
-        <div class="food-item"><div class="food-emoji">🌾</div><div class="food-name">Oatmeal</div><div class="food-desc">Stabilizes blood sugar and mood</div></div>
-        <div class="food-item"><div class="food-emoji">🧀</div><div class="food-name">Yogurt</div><div class="food-desc">Probiotics reduce anxiety</div></div>
+        <div class="food-item"><div class="food-emoji">🍌</div><div class="food-name">Banana</div><div class="food-desc">Boosts mood naturally</div></div>
+        <div class="food-item"><div class="food-emoji">🥦</div><div class="food-name">Broccoli</div><div class="food-desc">Reduces stress hormones</div></div>
+        <div class="food-item"><div class="food-emoji">🥚</div><div class="food-name">Eggs</div><div class="food-desc">Supports mood</div></div>
+        <div class="food-item"><div class="food-emoji">🍊</div><div class="food-name">Oranges</div><div class="food-desc">Lowers cortisol</div></div>
+        <div class="food-item"><div class="food-emoji">🌾</div><div class="food-name">Oatmeal</div><div class="food-desc">Stabilizes mood</div></div>
+        <div class="food-item"><div class="food-emoji">🧀</div><div class="food-name">Yogurt</div><div class="food-desc">Reduces anxiety</div></div>
       </div>
       {% else %}
       <div class="food-grid">
-        <div class="food-item"><div class="food-emoji">🥗</div><div class="food-name">Leafy Greens</div><div class="food-desc">Folate supports dopamine production</div></div>
-        <div class="food-item"><div class="food-emoji">🍇</div><div class="food-name">Grapes</div><div class="food-desc">Antioxidants maintain health</div></div>
-        <div class="food-item"><div class="food-emoji">💧</div><div class="food-name">Water</div><div class="food-desc">Hydration prevents fatigue</div></div>
-        <div class="food-item"><div class="food-emoji">🍓</div><div class="food-name">Strawberries</div><div class="food-desc">Vitamin C supports immunity</div></div>
-        <div class="food-item"><div class="food-emoji">🌰</div><div class="food-name">Walnuts</div><div class="food-desc">Omega-3s keep brain calm</div></div>
-        <div class="food-item"><div class="food-emoji">🍚</div><div class="food-name">Brown Rice</div><div class="food-desc">Sustained energy, no sugar crash</div></div>
+        <div class="food-item"><div class="food-emoji">🥗</div><div class="food-name">Leafy Greens</div><div class="food-desc">Boosts dopamine</div></div>
+        <div class="food-item"><div class="food-emoji">🍇</div><div class="food-name">Grapes</div><div class="food-desc">Maintains health</div></div>
+        <div class="food-item"><div class="food-emoji">💧</div><div class="food-name">Water</div><div class="food-desc">Prevents fatigue</div></div>
+        <div class="food-item"><div class="food-emoji">🍓</div><div class="food-name">Strawberries</div><div class="food-desc">Boosts immunity</div></div>
+        <div class="food-item"><div class="food-emoji">🌰</div><div class="food-name">Walnuts</div><div class="food-desc">Keeps brain calm</div></div>
+        <div class="food-item"><div class="food-emoji">🍚</div><div class="food-name">Brown Rice</div><div class="food-desc">Sustained energy</div></div>
       </div>
       {% endif %}
     </div>
 
+    <br/>
   </div>
 
-  <!-- Try Again Button -->
-  <a href="/predict" class="retry-btn">🔄 Try Again</a>
-
-  <footer>
-    Stefanie S. Relos &nbsp;·&nbsp; BSIT-301 &nbsp;·&nbsp; Student Stress Level Prediction System
-  </footer>
+  <!-- Sticky Retry Button -->
+  <div class="retry-wrapper">
+    <a href="/predict" class="retry-btn">🔄 Try Again</a>
+  </div>
 
   <script>
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/static/sw.js");
-    }
+    if ("serviceWorker" in navigator) navigator.serviceWorker.register("/static/sw.js");
   </script>
 </body>
 </html>
